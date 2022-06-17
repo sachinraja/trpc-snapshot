@@ -1,7 +1,10 @@
 import { createHTTPServer } from '@trpc/server/adapters/standalone'
 import { appRouter } from './router.js'
 
-const { listen } = createHTTPServer({ router: appRouter })
+const { listen } = createHTTPServer({
+	router: appRouter,
+	createContext: () => ({}),
+})
 
 listen(3000)
 

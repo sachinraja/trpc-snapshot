@@ -1,10 +1,6 @@
-// import superjson from 'superjson'
+import { PrismaClient } from '@prisma/client'
+import { initTRPC, TRPCError } from '@trpc/server'
 import { fetch } from 'undici'
-// import { z } from 'zod'
-// import { createTRPCClient } from '../../../contributing/trpc-v10/packages/client'
-// import { createHTTPServer } from '../../../contributing/trpc-v10/packages/server/adapters/standalone'
-import { PrismaClient, User } from '@prisma/client'
-import { initTRPC, TRPCError } from '../../../contributing/trpc-v10/packages/server/src'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 global.fetch = fetch as any
@@ -29,7 +25,7 @@ const getUser = t.procedure.resolve(async () => {
 	return user
 })
 
-const appRouter = t.router({
+export const appRouter = t.router({
 	queries: {
 		getUser,
 	},
