@@ -16,7 +16,7 @@
 		"dist"
 	],
 	"scripts": {
-		"example": "nodemon \"tsx src/router.ts\" -e ts",
+		"example": "nodemon --exec \"tsx src/index.ts\" -e ts",
 		"build": "tsup",
 		"format": "dprint fmt",
 		"lint": "run-p lint:*",

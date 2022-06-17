@@ -18,10 +18,6 @@ const getUser = t.procedure.resolve(async () => {
 		where: {
 			id: 1,
 		},
-		include: {
-			posts: true,
-			_count: true,
-		},
 	})
 
 	if (!user) {
