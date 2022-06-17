@@ -1,3 +1,4 @@
+// this file is a remanent of the past, it's no longer needed but keeping it around just in case
 import { MiddlewareFunction } from '@trpc/server/dist/internals/middlewares.js'
 import fs from 'node:fs/promises'
 import path from 'node:path'
