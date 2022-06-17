@@ -8,7 +8,7 @@ export const buildSnapshots = async () => {
 
 	await Promise.all(procedureDefinitions.map(async (procedureDefinition) => {
 		const snapshotProcedurePath = path.join('snapshots', procedureDefinition.name)
-		const validatorPath = path.join(snapshotProcedurePath, 'validator.js')
+		// const validatorPath = path.join(snapshotProcedurePath, 'validator.js')
 		const typedValidatorPath = path.join(snapshotProcedurePath, 'index.ts')
 
 		await fs.mkdir(snapshotProcedurePath, { recursive: true })

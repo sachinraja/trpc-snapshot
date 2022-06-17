@@ -1,4 +1,4 @@
-import { Node, Type } from 'ts-morph'
+import { Node, Type, TypeFlags } from 'ts-morph'
 
 const zodBuilder = (method: string, argument_?: string) => `z.${method}(${argument_ ?? ''})`
 
@@ -24,8 +24,12 @@ export const typeToZod = (type: Type, locationNode: Node): string => {
 		return zodBuilder('literal', type.getText())
 	}
 
-	if (type.getSymbol()?.getName() === 'Date') {
-		return zodBuilder('date')
+	const flags = type.getFlags()
+	if (flags === TypeFlags.BigInt) {
+		return zodBuilder('bigint')
+	}
+	if (flags === TypeFlags.BigIntLiteral) {
+		return zodBuilder('literal', type.getText())
 	}
 
 	if (type.isAny()) {
@@ -38,6 +42,12 @@ export const typeToZod = (type: Type, locationNode: Node): string => {
 
 	if (type.isUndefined()) {
 		return zodBuilder('undefined')
+	}
+
+	const symbol = type.getSymbol()
+	if (symbol) {
+		const symbolName = symbol.getName()
+		if (symbolName === 'Date') return zodBuilder('date')
 	}
 
 	if (type.isUnion()) {
@@ -66,14 +76,14 @@ export const typeToZod = (type: Type, locationNode: Node): string => {
 	if (type.isObject()) {
 		const properties = type.getProperties()
 
-		const objectified = properties.map((property) => {
+		const propertySchemas = properties.map((property) => {
 			const propertyType = property.getTypeAtLocation(locationNode)
 
 			const zodType = typeToZod(propertyType, locationNode)
 			return `${property.getName()}: ${zodType}`
 		}).join(', ')
 
-		return zodBuilder('object', `{ ${objectified} }`)
+		return zodBuilder('object', `{ ${propertySchemas} }`)
 	}
 
 	// fallback to unknown

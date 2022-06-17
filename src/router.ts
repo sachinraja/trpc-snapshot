@@ -9,6 +9,12 @@ const prisma = new PrismaClient()
 
 const t = initTRPC()()
 
+// type User = {
+// 	id: string
+// 	name: string
+// 	createdAt: Date
+// }
+
 const getUser = t.procedure.resolve(async () => {
 	const user = await prisma.user.findUnique({
 		where: {
