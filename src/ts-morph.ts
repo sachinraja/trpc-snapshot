@@ -20,12 +20,22 @@ export const getProcedureDefinitions = () => {
 
 	const appRouterDeclaration = exportDeclaration
 
-	const procedures = exportDeclaration.getType().getPropertyOrThrow('queries').getTypeAtLocation(appRouterDeclaration)
+	const procedures = exportDeclaration
+		.getType()
+		.getPropertyOrThrow('queries')
+		.getTypeAtLocation(appRouterDeclaration)
+		// get all query procedures
 		.getProperties()
 
 	const procedureDefinitions = procedures.map((procedure) => {
-		const procedureType =
-			procedure.getTypeAtLocation(appRouterDeclaration).getCallSignatures()[0].getReturnType().getTypeArguments()[0]
+		const procedureType = procedure
+			.getTypeAtLocation(appRouterDeclaration)
+			// get function type
+			.getCallSignatures()[0]
+			// get return type of function
+			.getReturnType()
+			// unwrap Promise<Type>
+			.getTypeArguments()[0]
 
 		return {
 			name: procedure.getName(),
