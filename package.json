@@ -30,7 +30,7 @@
 	"dependencies": {
 		"@trpc/server": "^10.0.0-alpha.25",
 		"@ts-morph/bootstrap": "^0.16.0",
-		"ts-morph": "^15.1.0"
+		"ts-morph": "^16.0.0"
 	},
 	"devDependencies": {
 		"@babel/core": "7.18.5",

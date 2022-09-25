@@ -5,7 +5,7 @@ specifiers:
   '@prisma/client': 3.15.2
   '@sachinraja/eslint-config': 0.1.1
   '@trpc/client': 10.0.0-alpha.25
-  '@trpc/server': 10.0.0-alpha.25
+  '@trpc/server': ^10.0.0-alpha.25
   '@ts-morph/bootstrap': ^0.16.0
   '@types/babel__core': 7.1.19
   '@types/node': 18.0.0
@@ -17,7 +17,7 @@ specifiers:
   nodemon: 2.0.16
   npm-run-all: 4.1.5
   prisma: 3.15.2
-  ts-morph: ^15.1.0
+  ts-morph: ^16.0.0
   tsup: 6.0.1
   tsx: 3.4.2
   typescript: 4.7.2
@@ -29,13 +29,13 @@ specifiers:
 dependencies:
   '@trpc/server': 10.0.0-alpha.25
   '@ts-morph/bootstrap': 0.16.0
-  ts-morph: 15.1.0
+  ts-morph: 16.0.0
 
 devDependencies:
   '@babel/core': 7.18.5
   '@prisma/client': 3.15.2_prisma@3.15.2
   '@sachinraja/eslint-config': 0.1.1_xztl6dhthcahlo6akmb2bmjmle
-  '@trpc/client': 10.0.0-alpha.25
+  '@trpc/client': 10.0.0-alpha.25_6o5npo4lt3ivsglgy42bx6izxu
   '@types/babel__core': 7.1.19
   '@types/node': 18.0.0
   babel-plugin-spectypes: 2.1.3_@babel+core@7.18.5
@@ -421,19 +421,19 @@ packages:
       defer-to-connect: 1.1.3
     dev: true
 
-  /@trpc/client/10.0.0-alpha.25:
+  /@trpc/client/10.0.0-alpha.25_6o5npo4lt3ivsglgy42bx6izxu:
     resolution: {integrity: sha512-6ky7qHq4/M1WSROy/lMm00gUSwKDyWbhIMfNKM6Ksc6YrXcV/Mr6wHz4KOhxTDskEp5/M59ht4wY4da25Ope3Q==}
     peerDependencies:
       '@trpc/server': 10.0.0-alpha.25
     dependencies:
       '@babel/runtime': 7.18.3
+      '@trpc/server': 10.0.0-alpha.25
     dev: true
 
   /@trpc/server/10.0.0-alpha.25:
     resolution: {integrity: sha512-bfTw8E25npEO+JswRGWzQzMiB94Sa6PKKHeIK0a7VDwXPC2nwP2GeyedREQ9NVqp5iwRprt4eQoDoc4kWF8Sig==}
     dependencies:
       tslib: 2.4.0
-    dev: false
 
   /@ts-morph/bootstrap/0.16.0:
     resolution: {integrity: sha512-FYW3bK5EBeAgpHu0qZ57gHbLjzgzC81y5EJmrebzIhXSYg6OgZu5lFHpF5NJ7CwM7ZMhxX1PG+DRA8e+skopKw==}
@@ -443,6 +443,15 @@ packages:
 
   /@ts-morph/common/0.16.0:
     resolution: {integrity: sha512-SgJpzkTgZKLKqQniCjLaE3c2L2sdL7UShvmTmPBejAKd2OKV/yfMpQ2IWpAuA+VY5wy7PkSUaEObIqEK6afFuw==}
+    dependencies:
+      fast-glob: 3.2.11
+      minimatch: 5.1.0
+      mkdirp: 1.0.4
+      path-browserify: 1.0.1
+    dev: false
+
+  /@ts-morph/common/0.17.0:
+    resolution: {integrity: sha512-RMSSvSfs9kb0VzkvQ2NWobwnj7TxCA9vI/IjR9bDHqgAyVbu2T0DN4wiKVqomyDWqO7dPr/tErSfq7urQ1Q37g==}
     dependencies:
       fast-glob: 3.2.11
       minimatch: 5.1.0
@@ -918,10 +927,8 @@ packages:
       mimic-response: 1.0.1
     dev: true
 
-  /code-block-writer/11.0.0:
-    resolution: {integrity: sha512-GEqWvEWWsOvER+g9keO4ohFoD3ymwyCnqY3hoTr7GZipYFwEhMHJw+TtV0rfgRhNImM6QWZGO2XYjlJVyYT62w==}
-    dependencies:
-      tslib: 2.3.1
+  /code-block-writer/11.0.3:
+    resolution: {integrity: sha512-NiujjUFB4SwScJq2bwbYUtXbZhBSlY6vYzm++3Q6oC+U+injTqfPYFK8wS9COOmb2lueqp0ZRB4nK1VYeHgNyw==}
     dev: false
 
   /color-convert/1.9.3:
@@ -3272,11 +3279,11 @@ packages:
       ts-tiny-invariant: 2.0.4
     dev: true
 
-  /ts-morph/15.1.0:
-    resolution: {integrity: sha512-RBsGE2sDzUXFTnv8Ba22QfeuKbgvAGJFuTN7HfmIRUkgT/NaVLfDM/8OFm2NlFkGlWEXdpW5OaFIp1jvqdDuOg==}
+  /ts-morph/16.0.0:
+    resolution: {integrity: sha512-jGNF0GVpFj0orFw55LTsQxVYEUOCWBAbR5Ls7fTYE5pQsbW18ssTb/6UXx/GYAEjS+DQTp8VoTw0vqYMiaaQuw==}
     dependencies:
-      '@ts-morph/common': 0.16.0
-      code-block-writer: 11.0.0
+      '@ts-morph/common': 0.17.0
+      code-block-writer: 11.0.3
     dev: false
 
   /ts-railway/6.1.0:
@@ -3291,13 +3298,8 @@ packages:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
     dev: true
 
-  /tslib/2.3.1:
-    resolution: {integrity: sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==}
-    dev: false
-
   /tslib/2.4.0:
     resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
-    dev: false
 
   /tsup/6.0.1_typescript@4.7.2:
     resolution: {integrity: sha512-2Pl1YkEEvzfg4aYgwUILaHV0wwZQKO7mNHMQChyzdCNlQqf11eug7gWk86XCb3CvRofCXBX87x73BTGjyS3cOQ==}
