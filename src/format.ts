@@ -1,17 +1,15 @@
 import { capitalize } from './utils.js'
 
-const prelude = `import { bigint } from 'trpc-snapshot/validators'`
-
-export const formatValidator = (validator: string) =>
-	`${prelude}\n\nexport const validate = (value) => {
-	const result = ${validator}
-
-	if (result.tag === 'failure') {
-		throw new Error(result.failure.errors)
+export const formatValidator = (validator: string) => {
+	const validatorBody = validator.slice(47).slice(0, -5)
+	return `export const validate = (value) => {
+	if (!(${validatorBody})) {
+		throw new Error("Output did not match")
 	}
 
-	return result.success
+	return value
 }`
+}
 
 export const formatTypedValidator = (options: { procedurePath: string; zodSchema: string }) => {
 	const { procedurePath, zodSchema } = options
@@ -20,7 +18,7 @@ export const formatTypedValidator = (options: { procedurePath: string; zodSchema
 	return [
 		"import { validate } from './validator.js'",
 		"import { z } from 'zod'\n",
-		`export const ${functionName} = <TSchema extends z.ZodSchema>(schema: TSchema) => validate as (value: unknown) => z.infer<TSchema>`,
-		`const check = ${functionName}(${zodSchema})`,
+		`const schema = ${zodSchema}`,
+		`export const ${functionName} = validate as (value: unknown) => z.infer<typeof schema>`,
 	].join('\n')
 }

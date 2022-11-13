@@ -1,13 +1,13 @@
 import { PrismaClient } from '@prisma/client'
 import { initTRPC, TRPCError } from '@trpc/server'
 import { fetch } from 'undici'
-
+import { checkGetUser } from '../snapshots/getUser'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 global.fetch = fetch as any
 
 const prisma = new PrismaClient()
 
-const t = initTRPC()()
+const t = initTRPC.create()
 
 // type User = {
 // 	id: string
@@ -15,8 +15,8 @@ const t = initTRPC()()
 // 	createdAt: Date
 // }
 
-const getUser = t.procedure.resolve(async () => {
-	const user = await prisma.user.findUnique({
+const getUser = t.procedure.output(checkGetUser).query(async () => {
+	const user = await prisma.user.findMany({
 		where: {
 			id: 1,
 		},
@@ -32,9 +32,7 @@ const getUser = t.procedure.resolve(async () => {
 })
 
 export const appRouter = t.router({
-	queries: {
-		getUser,
-	},
+	getUser,
 })
 
 export type AppRouter = typeof appRouter

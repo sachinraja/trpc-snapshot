@@ -1,4 +1,5 @@
-import { Project, SyntaxKind, TypeAliasDeclaration } from 'ts-morph'
+import { Project, SyntaxKind, Type, TypeAliasDeclaration } from 'ts-morph'
+import { typeToTypebox } from './type-to-typebox.js'
 import { typeToZod } from './type-to-zod.js'
 
 export const getProcedureDefinitions = () => {
@@ -20,26 +21,22 @@ export const getProcedureDefinitions = () => {
 
 	const appRouterDeclaration = exportDeclaration
 
-	const procedures = exportDeclaration
-		.getType()
-		.getPropertyOrThrow('queries')
-		.getTypeAtLocation(appRouterDeclaration)
-		// get all query procedures
-		.getProperties()
+	const procedures = exportDeclaration.getType().getProperties().filter((p) =>
+		!['_def', 'createCaller', 'getErrorShape'].includes(p.getName())
+	)
 
 	const procedureDefinitions = procedures.map((procedure) => {
-		const procedureType = procedure
-			.getTypeAtLocation(appRouterDeclaration)
-			// get function type
-			.getCallSignatures()[0]
-			// get return type of function
-			.getReturnType()
-			// unwrap Promise<Type>
-			.getTypeArguments()[0]
+		const procedureType = procedure.getTypeAtLocation(appRouterDeclaration)
+		const outputType = procedureType
+			.getProperty('_def')
+			?.getTypeAtLocation(appRouterDeclaration)
+			.getProperty('_output_out')
+			?.getTypeAtLocation(appRouterDeclaration) as Type
 
 		return {
 			name: procedure.getName(),
-			zod: typeToZod(procedureType, appRouterDeclaration),
+			zod: typeToZod(outputType, appRouterDeclaration),
+			typebox: typeToTypebox(outputType, appRouterDeclaration),
 		}
 	})
 
