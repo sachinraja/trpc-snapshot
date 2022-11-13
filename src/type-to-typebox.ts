@@ -1,91 +1,102 @@
-import { TAnySchema, TObject, Type as TBox } from '@sinclair/typebox'
 import { Node, Type, TypeFlags } from 'ts-morph'
 
-export const typeToTypebox = (type: Type, locationNode: Node): TAnySchema => {
+const typeboxBuilder = (method: string, argument_?: string) => `Type.${method}(${argument_ ?? ''})`
+
+export const typeToTypebox = (type: Type, locationNode: Node): string => {
 	if (type.isBoolean()) {
-		return TBox.Boolean()
+		return typeboxBuilder('Boolean')
 	}
 	if (type.isBooleanLiteral()) {
-		return TBox.Literal(type.getLiteralValue() as unknown as boolean)
+		return typeboxBuilder('Literal', type.getText())
 	}
 
 	if (type.isString()) {
-		return TBox.String()
+		return typeboxBuilder('String')
 	}
 	if (type.isStringLiteral()) {
-		return TBox.Literal(type.getLiteralValue() as unknown as string)
+		return typeboxBuilder('Literal', type.getText())
 	}
 
 	if (type.isNumber()) {
-		return TBox.Number()
+		return typeboxBuilder('Number')
 	}
 	if (type.isNumberLiteral()) {
-		return TBox.Literal(type.getLiteralValue() as unknown as number)
+		return typeboxBuilder('Literal', type.getText())
 	}
 
 	const flags = type.getFlags()
 	if (flags === TypeFlags.BigInt) {
-		throw new Error('BigInt is not supported by TypeBox')
+		throw new Error('BigInt is not supported by Typebox')
 	}
 	if (flags === TypeFlags.BigIntLiteral) {
-		return TBox.Literal(type.getText())
+		throw new Error('BigInt is not supported by Typebox')
 	}
 
 	if (type.isAny()) {
-		return TBox.Any()
+		return typeboxBuilder('Any')
 	}
 
 	if (type.isNull()) {
-		return TBox.Null()
+		return typeboxBuilder('Null')
 	}
 
 	if (type.isUndefined()) {
-		return TBox.Undefined()
+		return typeboxBuilder('Undefined')
 	}
 
 	const symbol = type.getSymbol()
 	if (symbol) {
 		const symbolName = symbol.getName()
-		if (symbolName === 'Date') return TBox.Date()
+		if (symbolName === 'Date') return typeboxBuilder('Date')
 	}
 
 	if (type.isUnion()) {
-		const union = type.getUnionTypes().map((innerType) => typeToTypebox(innerType, locationNode))
-		return TBox.Union(union)
+		const union = type.getUnionTypes().map((innerType) => typeToTypebox(innerType, locationNode)).join(', ')
+		return typeboxBuilder('Union', `[${union}]`)
 	}
 
 	if (type.isIntersection()) {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const intersection = type.getIntersectionTypes().map((innerType) =>
-			typeToTypebox(innerType, locationNode)
-		) as TObject[]
-
-		return TBox.Intersect(intersection)
+		const intersection = type.getIntersectionTypes().map((innerType) => typeToTypebox(innerType, locationNode)).join(
+			', ',
+		)
+		return typeboxBuilder('Intersect', `[${intersection}]`)
 	}
 
 	if (type.isTuple()) {
-		const tuple = type.getTupleElements().map((innerType) => typeToTypebox(innerType, locationNode))
-		return TBox.Tuple(tuple)
+		const tuple = type.getTupleElements().map((innerType) => typeToTypebox(innerType, locationNode)).join(', ')
+		return typeboxBuilder('Tuple', `[${tuple}]`)
 	}
 
 	if (type.isArray()) {
 		const elementType = type.getArrayElementTypeOrThrow()
 
-		return TBox.Array(typeToTypebox(elementType, locationNode))
+		return typeboxBuilder('Array', typeToTypebox(elementType, locationNode))
 	}
 
 	if (type.isObject()) {
 		const properties = type.getProperties()
 
-		const propertySchemas = Object.fromEntries(properties.map((property) => {
+		const propertySchemas = properties.map((property) => {
 			const propertyType = property.getTypeAtLocation(locationNode)
 
-			return [property.getName(), typeToTypebox(propertyType, locationNode)]
-		}))
+			const schema = typeToTypebox(propertyType, locationNode)
+			return `${property.getName()}: ${schema}`
+		}).join(', ')
 
-		return TBox.Object(propertySchemas)
+		return typeboxBuilder('Object', `{ ${propertySchemas} }`)
 	}
 
 	// fallback to unknown
-	return TBox.Unknown()
+	return typeboxBuilder('Unknown')
+}
+
+export const formatTypeboxValidator = (options: { functionName: string; typeboxSchema: string }) => {
+	const { functionName, typeboxSchema } = options
+
+	return `import { Boxed } from 'trpc-snapshot/typebox'
+import { Type } from '@sinclair/typebox'
+
+export const schema = ${typeboxSchema}
+export const ${functionName} = Boxed(schema)
+`
 }

@@ -11,6 +11,7 @@ specifiers:
   '@types/babel__core': 7.1.20
   '@types/node': 18.11.9
   babel-plugin-spectypes: ^2.1.7
+  bundle-require: ^3.1.2
   dprint: 0.32.2
   eslint: 8.27.0
   nodemon: 2.0.20
@@ -29,6 +30,7 @@ dependencies:
   '@sinclair/typebox': 0.25.8
   '@trpc/server': 10.0.0-rc.7
   '@ts-morph/bootstrap': 0.17.0
+  bundle-require: 3.1.2
   ts-morph: 16.0.0
 
 devDependencies:
@@ -802,6 +804,15 @@ packages:
     resolution: {integrity: sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==}
     engines: {node: '>=6'}
     dev: true
+
+  /bundle-require/3.1.2:
+    resolution: {integrity: sha512-Of6l6JBAxiyQ5axFxUM6dYeP/W7X2Sozeo/4EYB9sJhL+dqL7TKjg+shwxp6jlu/6ZSERfsYtIpSJ1/x3XkAEA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    peerDependencies:
+      esbuild: '>=0.13'
+    dependencies:
+      load-tsconfig: 0.2.3
+    dev: false
 
   /bundle-require/3.1.2_esbuild@0.15.13:
     resolution: {integrity: sha512-Of6l6JBAxiyQ5axFxUM6dYeP/W7X2Sozeo/4EYB9sJhL+dqL7TKjg+shwxp6jlu/6ZSERfsYtIpSJ1/x3XkAEA==}
@@ -1974,7 +1985,6 @@ packages:
   /load-tsconfig/0.2.3:
     resolution: {integrity: sha512-iyT2MXws+dc2Wi6o3grCFtGXpeMvHmJqS27sMPGtV2eUu4PeFnG+33I8BlFK1t1NWMjOpcx9bridn5yxLDX2gQ==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-    dev: true
 
   /local-pkg/0.4.2:
     resolution: {integrity: sha512-mlERgSPrbxU3BP4qBqAvvwlgW4MTg78iwJdGGnv7kibKjWcJksrG3t6LB5lXI93wXRDvG4NpUgJFmTG4T6rdrg==}

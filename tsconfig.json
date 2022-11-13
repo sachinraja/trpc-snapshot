@@ -9,8 +9,13 @@
 		"allowSyntheticDefaultImports": true,
 		"forceConsistentCasingInFileNames": true,
 		"noEmit": true,
-		"isolatedModules": true
+		"isolatedModules": true,
+		"baseUrl": ".",
+		"paths": {
+			"trpc-snapshot": ["./src"],
+			"trpc-snapshot/*": ["src/*"]
+		}
 	},
-	"include": ["src", "test"],
+	"include": ["src", "test", "trpc.config.ts", "snapshots"],
 	"exclude": ["node_modules", "dist"]
 }

@@ -1,27 +1,31 @@
-import { TypeCompiler } from '@sinclair/typebox/compiler'
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import { formatTypedValidator, formatValidator } from './format.js'
+import { resolveConfig, TrpcSnapshotConfig } from './config.js'
 import { getProcedureDefinitions } from './ts-morph.js'
+import { formatTypeboxValidator, typeToTypebox } from './type-to-typebox.js'
+import { capitalize } from './utils.js'
+
 export const buildSnapshots = async () => {
-	const procedureDefinitions = getProcedureDefinitions()
+	const config = await resolveConfig()
+	console.log(config)
+	const { definitions, routerLocationNode } = getProcedureDefinitions(config)
 
-	await Promise.all(procedureDefinitions.map(async (procedureDefinition) => {
-		const snapshotProcedurePath = path.join('snapshots', procedureDefinition.name)
-		const validatorPath = path.join(snapshotProcedurePath, 'validator.js')
-		const typedValidatorPath = path.join(snapshotProcedurePath, 'index.ts')
+	await Promise.all(definitions.map(async (definition) => {
+		const validatorPath = path.join('snapshots', `${definition.name}.ts`)
 
-		await fs.mkdir(snapshotProcedurePath, { recursive: true })
+		const functionName = `check${capitalize(definition.name)}`
 
 		await Promise.all([
-			fs.writeFile(validatorPath, formatValidator(TypeCompiler.Compile(procedureDefinition.typebox).Code()), 'utf8'),
 			fs.writeFile(
-				typedValidatorPath,
-				formatTypedValidator({ procedurePath: procedureDefinition.name, zodSchema: procedureDefinition.zod }),
+				validatorPath,
+				formatTypeboxValidator({
+					functionName,
+					typeboxSchema: typeToTypebox(definition.outputType, routerLocationNode),
+				}),
 				'utf8',
 			),
 		])
 	}))
 }
 
-buildSnapshots()
+export const defineConfig = (config: Partial<TrpcSnapshotConfig>) => config

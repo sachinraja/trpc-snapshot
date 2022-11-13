@@ -1,10 +1,14 @@
 import { Project, SyntaxKind, Type, TypeAliasDeclaration } from 'ts-morph'
-import { typeToTypebox } from './type-to-typebox.js'
-import { typeToZod } from './type-to-zod.js'
+import { TrpcSnapshotConfig } from './config.js'
 
-export const getProcedureDefinitions = () => {
+type ProcedureDefinition = {
+	name: string
+	outputType: Type
+}
+
+export const getProcedureDefinitions = (config: TrpcSnapshotConfig) => {
 	const project = new Project({
-		tsConfigFilePath: 'tsconfig.json',
+		tsConfigFilePath: config.tsconfigPath,
 	})
 
 	const routerFile = project.getSourceFileOrThrow('router.ts')
@@ -25,7 +29,7 @@ export const getProcedureDefinitions = () => {
 		!['_def', 'createCaller', 'getErrorShape'].includes(p.getName())
 	)
 
-	const procedureDefinitions = procedures.map((procedure) => {
+	const definitions = procedures.map<ProcedureDefinition>((procedure) => {
 		const procedureType = procedure.getTypeAtLocation(appRouterDeclaration)
 		const outputType = procedureType
 			.getProperty('_def')
@@ -35,10 +39,9 @@ export const getProcedureDefinitions = () => {
 
 		return {
 			name: procedure.getName(),
-			zod: typeToZod(outputType, appRouterDeclaration),
-			typebox: typeToTypebox(outputType, appRouterDeclaration),
+			outputType,
 		}
 	})
 
-	return procedureDefinitions
+	return { definitions, routerLocationNode: appRouterDeclaration }
 }
